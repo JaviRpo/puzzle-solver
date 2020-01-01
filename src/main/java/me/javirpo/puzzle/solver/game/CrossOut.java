@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import any.Unscrambleletters;
+import me.javirpo.puzzle.solver.Unscrambleletters;
 
 public class CrossOut extends Game {
     private String[] patternRows;
@@ -94,7 +94,7 @@ public class CrossOut extends Game {
 
     private boolean solveRows() {
         boolean checkAgain = false;
-        
+
         for (int i = 0; i < crossRows.length; i += 2) {
             if (crossRows[i] != null) {
                 patternRows[i] = checkPattern(i, 0, 0, 2, cols, patternRows[i]);

@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
-import any.Unscrambleletters;
+import me.javirpo.puzzle.solver.Unscrambleletters;
 
 public class Codeword extends Game {
     private int maxLetters = 1;

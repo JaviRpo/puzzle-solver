@@ -2,6 +2,7 @@ package me.javirpo.puzzle.solver;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -23,7 +24,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
