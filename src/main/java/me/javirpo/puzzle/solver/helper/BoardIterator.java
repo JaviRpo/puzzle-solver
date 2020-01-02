@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BoardIterator implements Iterator<Line> {
 
+    private boolean horizontal = true;
     @NonNull
-    private boolean horizontal;
+    private int[][] boardNumbers;
     @NonNull
-    private int[][] board;
+    private char[][] boardLetters;
     @NonNull
     private int rows;
     @NonNull
@@ -53,40 +54,54 @@ public class BoardIterator implements Iterator<Line> {
 
     private void calculateNextRow() {
         int indexStart = -1;
-        while (indexStart == -1 && indexStart < rows) {
+        while (indexStart == -1 && row < rows) {
             indexStart = getNextStart(row, col + 1, 0, 1);
             if (indexStart == -1) {
                 row++;
-            }
-        }
-
-        int indexEnd = getEndOfWord(row, indexStart, 0, 1);
-        if (indexEnd != -1) {
-            int diffLetters = indexEnd - indexStart;
-            if (diffLetters >= 2) {
-                Point from = new Point(row, indexStart);
-                Point to = new Point(row, indexEnd);
-                nextLine = new Line(horizontal, from, to);
+                col = -1;
+            } else {
+                int indexEnd = getEndOfWord(row, indexStart, 0, 1);
+                if (indexEnd != -1) {
+                    int diffLetters = indexEnd - indexStart;
+                    if (diffLetters >= 2) {
+                        Point from = new Point(row, indexStart);
+                        Point to = new Point(row, indexEnd);
+                        nextLine = new Line(horizontal, from, to);
+                    } else {
+                        indexStart = -1;
+                    }
+                    col = indexEnd;
+                } else {
+                    row++;
+                    col = -1;
+                }
             }
         }
     }
 
     private void calculateNextCol() {
         int indexStart = -1;
-        while (indexStart == -1 && indexStart < cols) {
+        while (indexStart == -1 && col < cols) {
             indexStart = getNextStart(row + 1, col, 1, 0);
             if (indexStart == -1) {
-                row++;
-            }
-        }
-
-        int indexEnd = getEndOfWord(indexStart, col, 1, 0);
-        if (indexEnd != -1) {
-            int diffLetters = indexEnd - indexStart;
-            if (diffLetters >= 2) {
-                Point from = new Point(row, indexStart);
-                Point to = new Point(row, indexEnd);
-                nextLine = new Line(horizontal, from, to);
+                col++;
+                row = -1;
+            } else {
+                int indexEnd = getEndOfWord(indexStart, col, 1, 0);
+                if (indexEnd != -1) {
+                    int diffLetters = indexEnd - indexStart;
+                    if (diffLetters >= 2) {
+                        Point from = new Point(indexStart, col);
+                        Point to = new Point(indexEnd, col);
+                        nextLine = new Line(horizontal, from, to);
+                    } else {
+                        indexStart = -1;
+                    }
+                    row = indexEnd;
+                } else {
+                    col++;
+                    row = -1;
+                }
             }
         }
     }
@@ -95,12 +110,12 @@ public class BoardIterator implements Iterator<Line> {
         boolean hasSpace = false;
         int index = -1;
         for (; row < rows && col < cols; row += plusRow, col += plusCol) {
-            if (board[row][col] != 0) {
+            if (boardNumbers[row][col] != 0) {
                 if (index == -1) {
                     index = plusRow != 0 ? row : col;
                 }
 
-                hasSpace |= board[row][col] == 0;
+                hasSpace |= boardLetters[row][col] == ' ';
                 if (hasSpace) {
                     break;
                 }
@@ -118,7 +133,7 @@ public class BoardIterator implements Iterator<Line> {
 
         int index = -1;
         for (; row < rows && col < cols; row += plusRow, col += plusCol) {
-            if (board[row][col] == 0) {
+            if (boardNumbers[row][col] == 0) {
                 break;
             }
 

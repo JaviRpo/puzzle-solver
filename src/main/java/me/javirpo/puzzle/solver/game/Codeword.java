@@ -11,6 +11,9 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 
 import me.javirpo.puzzle.solver.Unscrambleletters;
+import me.javirpo.puzzle.solver.helper.BoardIterator;
+import me.javirpo.puzzle.solver.helper.Line;
+import me.javirpo.puzzle.solver.helper.Point;
 
 public class Codeword extends Game {
     private int maxLetters = 1;
@@ -142,9 +145,34 @@ public class Codeword extends Game {
     private void solve() throws IOException {
         boolean checkAgain = true;
         while (checkAgain) {
-            checkAgain = solveRows();
-            checkAgain |= solveCols();
+            checkAgain = solveIterator();
+            // checkAgain = solveRows();
+            // checkAgain |= solveCols();
         }
+    }
+
+    private boolean solveIterator() throws IOException {
+        boolean checkAgain = false;
+
+        BoardIterator iterator = new BoardIterator(boardNumbers, board, rows, cols);
+        while (iterator.hasNext()) {
+            Line line = iterator.next();
+            int size = line.length() + 1;
+            Map<Integer, Integer> numberRepeated = new HashMap<>(size);
+            StringBuilder pattern = new StringBuilder();
+            StringBuilder letterSearch = new StringBuilder();
+            ArrayList<Integer> numbers = new ArrayList<>(size);
+
+            for (Point p : line) {
+                checkLetter(p.getRow(), p.getCol(), numberRepeated, pattern, letterSearch, numbers);
+            }
+
+            checkAgain |= search(size, numberRepeated, pattern, letterSearch, numbers);
+            
+            populateLetters();
+        }
+
+        return checkAgain;
     }
 
     private boolean solveRows() throws IOException {
