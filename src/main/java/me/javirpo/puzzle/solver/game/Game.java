@@ -80,7 +80,7 @@ public abstract class Game {
             for (int j = 0; j < cols; j++) {
                 sb.append(boardLetters[i][j]);
             }
-            sb.append("\n");
+            sb.append('\n');
         }
         return sb.toString();
     }
