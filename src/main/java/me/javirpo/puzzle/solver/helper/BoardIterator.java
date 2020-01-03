@@ -4,10 +4,12 @@ import java.util.Iterator;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @RequiredArgsConstructor
 public class BoardIterator implements Iterator<Line> {
-
+    @Setter
+    private int minLength = 3;
     private boolean horizontal = true;
     @NonNull
     private int[][] boardNumbers;
@@ -63,7 +65,7 @@ public class BoardIterator implements Iterator<Line> {
                 int indexEnd = getEndOfWord(row, indexStart, 0, 1);
                 if (indexEnd != -1) {
                     int diffLetters = indexEnd - indexStart;
-                    if (diffLetters >= 2) {
+                    if (diffLetters >= minLength - 1) {
                         Point from = new Point(row, indexStart);
                         Point to = new Point(row, indexEnd);
                         nextLine = new Line(horizontal, from, to);
@@ -90,7 +92,7 @@ public class BoardIterator implements Iterator<Line> {
                 int indexEnd = getEndOfWord(indexStart, col, 1, 0);
                 if (indexEnd != -1) {
                     int diffLetters = indexEnd - indexStart;
-                    if (diffLetters >= 2) {
+                    if (diffLetters >= minLength - 1) {
                         Point from = new Point(indexStart, col);
                         Point to = new Point(indexEnd, col);
                         nextLine = new Line(horizontal, from, to);

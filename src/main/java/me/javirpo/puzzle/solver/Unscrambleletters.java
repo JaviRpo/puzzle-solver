@@ -241,7 +241,18 @@ public class Unscrambleletters {
         return new MyEntry<>("" + number, null);
     }
 
-    public static Map<Integer, Collection<String>> getWords(String letters) throws IOException {
+    public static Map<Integer, Collection<String>> getWordsWithCache(String letters) throws IOException {
+        Map<Integer, Collection<String>> map = fullMap.get(letters);
+        if (map != null && !map.isEmpty()) {
+            return map;
+        }
+        map = getWords(letters);
+        fullMap.put(letters, map);
+        
+        return map;
+    }
+
+    private static Map<Integer, Collection<String>> getWords(String letters) throws IOException {
         List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.add(new BasicNameValuePair("hand", letters));
         HttpPost post = new HttpPost(URL);

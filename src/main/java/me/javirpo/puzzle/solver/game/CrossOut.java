@@ -17,28 +17,15 @@ public class CrossOut extends Game {
     @Override
     protected void run() throws IOException {
         createBoard();
-        readRows();
-        readCols();
+        _readRows();
+        _readCols();
         solve();
 
         printBoard();
     }
 
-    private void createBoard() {
-        System.out.println();
-        System.out.print("Rows: ");
-        String strRows = sc.nextLine();
-        System.out.print("Cols: ");
-        String strCols = sc.nextLine();
-
-        rows = Integer.parseInt(strRows);
-        cols = Integer.parseInt(strCols);
-        board = new char[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                board[i][j] = ' ';
-            }
-        }
+    protected void createBoard() {
+        super.createBoard();
 
         patternRows = new String[rows];
         patternCols = new String[cols];
@@ -57,7 +44,7 @@ public class CrossOut extends Game {
             String pattern = createPattern(line);
             patternLines[i] = pattern;
 
-            Map<Integer, Collection<String>> map = Unscrambleletters.getWords(line);
+            Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(line);
             Collection<String> words = Unscrambleletters.getAndFilter(map, size, pattern);
             crossLines[i] = words;
         }
@@ -76,11 +63,11 @@ public class CrossOut extends Game {
         return sb.toString();
     }
 
-    private void readRows() throws IOException {
+    private void _readRows() throws IOException {
         crossRows = read("Rows", rows, patternRows);
     }
 
-    private void readCols() throws IOException {
+    private void _readCols() throws IOException {
         crossCols = read("Cols", cols, patternCols);
     }
 
@@ -105,7 +92,7 @@ public class CrossOut extends Game {
                 if (words.size() == 1) {
                     String word = words.iterator().next();
                     for (int j = 0; j < word.length(); j++) {
-                        board[i][j] = word.charAt(j);
+                        boardLetters[i][j] = word.charAt(j);
                     }
 
                     crossRows[i] = null;
@@ -133,7 +120,7 @@ public class CrossOut extends Game {
                 if (words.size() == 1) {
                     String word = words.iterator().next();
                     for (int j = 0; j < word.length(); j++) {
-                        board[j][i] = word.charAt(j);
+                        boardLetters[j][i] = word.charAt(j);
                     }
 
                     crossCols[i] = null;
@@ -156,8 +143,8 @@ public class CrossOut extends Game {
 
         String[] parts = splitPattern(pattern);
         for (int i = row, j = col, k = 0; i < len && j < len; i += plusRow, j += plusCol, k += 2) {
-            if (board[i][j] != ' ') {
-                parts[k] = "" + board[i][j];
+            if (boardLetters[i][j] != ' ') {
+                parts[k] = "" + boardLetters[i][j];
             }
         }
 

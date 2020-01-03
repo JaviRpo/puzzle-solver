@@ -21,7 +21,6 @@ public class Codeword extends Game {
     private String currentMissingLetters;
     private Collection<Character> missingLetters;
     private char[] letters;
-    private int[][] boardNumbers;
 
     @Override
     protected void run() throws IOException {
@@ -52,48 +51,13 @@ public class Codeword extends Game {
         printBoard();
     }
 
-    private boolean isDone() {
-        for (int i = 1; i < letters.length; i++) {
-            if (letters[i] == ' ') {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void createBoard() {
-        System.out.println();
-        System.out.print("Rows: ");
-        String strRows = sc.nextLine();
-        System.out.print("Cols: ");
-        String strCols = sc.nextLine();
-
-        rows = Integer.parseInt(strRows);
-        cols = Integer.parseInt(strCols);
-        board = new char[rows][cols];
-        boardNumbers = new int[rows][cols];
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                board[i][j] = ' ';
-            }
-        }
-    }
-
-    private void readRows() {
+    protected void readRows() {
+        super.readRows();
         System.out.println();
         System.out.println("Reading Rows ...");
 
         for (int i = 0; i < rows; i++) {
-            System.out.print("Rows #" + (i + 1) + ": ");
-            String line = sc.nextLine();
-            String[] numbers = line.split(",");
-            if (numbers.length != cols) {
-                System.out.println("Only " + numbers.length + " cols, " + cols + " is needed.");
-                i--;
-                continue;
-            }
             for (int j = 0; j < cols; j++) {
-                boardNumbers[i][j] = Integer.parseInt(numbers[j]);
                 maxLetters = Math.max(maxLetters, boardNumbers[i][j]);
             }
         }
@@ -137,7 +101,7 @@ public class Codeword extends Game {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 int letterNumber = boardNumbers[i][j];
-                board[i][j] = letters[letterNumber];
+                boardLetters[i][j] = letters[letterNumber];
             }
         }
     }
@@ -146,15 +110,13 @@ public class Codeword extends Game {
         boolean checkAgain = true;
         while (checkAgain) {
             checkAgain = solveIterator();
-            // checkAgain = solveRows();
-            // checkAgain |= solveCols();
         }
     }
 
     private boolean solveIterator() throws IOException {
         boolean checkAgain = false;
 
-        BoardIterator iterator = new BoardIterator(boardNumbers, board, rows, cols);
+        BoardIterator iterator = new BoardIterator(boardNumbers, boardLetters, rows, cols);
         while (iterator.hasNext()) {
             Line line = iterator.next();
             int size = line.length() + 1;
@@ -168,70 +130,10 @@ public class Codeword extends Game {
             }
 
             checkAgain |= search(size, numberRepeated, pattern, letterSearch, numbers);
-            
+
             populateLetters();
         }
 
-        return checkAgain;
-    }
-
-    private boolean solveRows() throws IOException {
-        boolean checkAgain = false;
-
-        for (int row = 0; row < rows; row++) {
-            int indexStart = getNextStart(row, 0, 0, 1);
-            int indexEnd = getEndOfWord(row, indexStart, 0, 1);
-            while (indexEnd != -1) {
-                int diffLetters = indexEnd - indexStart;
-                if (diffLetters >= 2) {
-                    int size = diffLetters + 1;
-                    Map<Integer, Integer> numberRepeated = new HashMap<>(size);
-                    StringBuilder pattern = new StringBuilder();
-                    StringBuilder letterSearch = new StringBuilder();
-                    ArrayList<Integer> numbers = new ArrayList<>(size);
-
-                    for (int col = indexStart; col <= indexEnd; col++) {
-                        checkLetter(row, col, numberRepeated, pattern, letterSearch, numbers);
-                    }
-
-                    checkAgain |= search(size, numberRepeated, pattern, letterSearch, numbers);
-                }
-                populateLetters();
-
-                indexStart = getNextStart(row, indexEnd + 1, 0, 1);
-                indexEnd = getEndOfWord(row, indexStart, 0, 1);
-            }
-        }
-        return checkAgain;
-    }
-
-    private boolean solveCols() throws IOException {
-        boolean checkAgain = false;
-
-        for (int col = 0; col < cols; col++) {
-            int indexStart = getNextStart(0, col, 1, 0);
-            int indexEnd = getEndOfWord(indexStart, col, 1, 0);
-            while (indexEnd != -1) {
-                int diffLetters = indexEnd - indexStart;
-                if (diffLetters >= 2) {
-                    int size = diffLetters + 1;
-                    Map<Integer, Integer> numberRepeated = new HashMap<>(size);
-                    StringBuilder pattern = new StringBuilder();
-                    StringBuilder letterSearch = new StringBuilder();
-                    ArrayList<Integer> numbers = new ArrayList<>(size);
-
-                    for (int row = indexStart; row <= indexEnd; row++) {
-                        checkLetter(row, col, numberRepeated, pattern, letterSearch, numbers);
-                    }
-
-                    checkAgain |= search(size, numberRepeated, pattern, letterSearch, numbers);
-                }
-                populateLetters();
-
-                indexStart = getNextStart(indexEnd + 1, col, 1, 0);
-                indexEnd = getEndOfWord(indexStart, col, 1, 0);
-            }
-        }
         return checkAgain;
     }
 
@@ -240,7 +142,7 @@ public class Codeword extends Game {
         int num = boardNumbers[row][col];
         numbers.add(num);
 
-        if (board[row][col] == ' ') {
+        if (boardLetters[row][col] == ' ') {
             pattern.append('[');
             pattern.append(currentMissingLetters);
             pattern.append(']');
@@ -252,8 +154,8 @@ public class Codeword extends Game {
                 return occurrences + 1;
             });
         } else {
-            pattern.append(board[row][col]);
-            letterSearch.append(board[row][col]);
+            pattern.append(boardLetters[row][col]);
+            letterSearch.append(boardLetters[row][col]);
         }
     }
 
@@ -270,60 +172,61 @@ public class Codeword extends Game {
             letterSearch.append(currentMissingLetters);
         }
 
-        Map<Integer, Collection<String>> map = Unscrambleletters.getWords(letterSearch.toString());
+        Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(letterSearch.toString());
         Collection<String> words = Unscrambleletters.getAndFilter(map, size, pattern.toString());
 
         if (words.size() == 1) {
-            String word = words.iterator().next();
-            for (int k = 0; k < size; k++) {
-                int num = numbers.get(k);
-                char c = word.charAt(k);
-
-                letters[num] = c;
-                missingLetters.remove(c);
-            }
-            checkAgain = true;
-
-            currentMissingLetters = StringUtils.join(missingLetters, "");
+            checkAgain = solveLetters(size, numbers, words.iterator().next());
+        } else if (words.size() > 1) {
+            checkAgain = lookForSimilarities(size, numbers, words);
         }
         return checkAgain;
     }
 
-    private int getNextStart(int row, int col, int plusRow, int plusCol) {
-        boolean hasSpace = false;
-        int index = -1;
-        for (; row < rows && col < cols; row += plusRow, col += plusCol) {
-            if (boardNumbers[row][col] != 0) {
-                if (index == -1) {
-                    index = plusRow != 0 ? row : col;
-                }
+    private boolean lookForSimilarities(int size, ArrayList<Integer> numbers, Collection<String> words) {
+        boolean checkAgain = false;
+        StringBuilder sb = new StringBuilder(size);
 
-                hasSpace |= board[row][col] == ' ';
-                if (hasSpace) {
+        String firstWord = words.iterator().next();
+        for (int i = 0; i < firstWord.length(); i++) {
+            char c = firstWord.charAt(i);
+            boolean same = true;
+            for (String word : words) {
+                if (c != word.charAt(i)) {
+                    same = false;
                     break;
                 }
+            }
+            if(same) {
+                sb.append(c);
+                checkAgain = true;
             } else {
-                index = -1;
+                sb.append(' ');
             }
         }
-        return hasSpace ? index : -1;
+        
+        if(checkAgain) {
+            checkAgain = solveLetters(size, numbers, sb.toString());
+        }
+        
+        return checkAgain;
     }
 
-    private int getEndOfWord(int row, int col, int plusRow, int plusCol) {
-        if (row == -1 || col == -1) {
-            return -1;
-        }
+    private boolean solveLetters(int size, ArrayList<Integer> numbers, String word) {
+        boolean checkAgain = false;
+        for (int k = 0; k < size; k++) {
+            char c = word.charAt(k);
+            if (c != ' ') {
+                int num = numbers.get(k);
 
-        int index = -1;
-        for (; row < rows && col < cols; row += plusRow, col += plusCol) {
-            if (boardNumbers[row][col] == 0) {
-                break;
+                letters[num] = c;
+                missingLetters.remove(c);
+                checkAgain = true;
             }
-
-            index = plusRow != 0 ? row : col;
         }
 
-        return index;
+        currentMissingLetters = StringUtils.join(missingLetters, "");
+        return checkAgain;
     }
 
     public static void main(String[] args) throws IOException {
