@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +38,7 @@ public class Codeword extends Game {
             printBoard();
             System.out.println();
             System.out.println("-1. Solve");
-            System.out.println("-2. Put number-letter");
+            System.out.println("-2. Put");
             System.out.print("Write: ");
             opt = sc.nextLine();
             switch (opt) {
@@ -129,9 +134,10 @@ public class Codeword extends Game {
                 checkLetter(p.getRow(), p.getCol(), numberRepeated, pattern, letterSearch, numbers);
             }
 
-            checkAgain |= search(size, numberRepeated, pattern, letterSearch, numbers);
+            checkAgain |= search(line, size, numberRepeated, pattern, letterSearch, numbers);
 
             populateLetters();
+            printBoard();
         }
 
         return checkAgain;
@@ -159,7 +165,7 @@ public class Codeword extends Game {
         }
     }
 
-    private boolean search(int size, Map<Integer, Integer> numberRepeated, StringBuilder pattern,
+    private boolean search(Line line, int size, Map<Integer, Integer> numberRepeated, StringBuilder pattern,
         StringBuilder letterSearch, ArrayList<Integer> numbers) throws IOException {
         boolean checkAgain = false;
 
@@ -174,6 +180,7 @@ public class Codeword extends Game {
 
         Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(letterSearch.toString());
         Collection<String> words = Unscrambleletters.getAndFilter(map, size, pattern.toString());
+        words = filterRepeatedLetters(line, numberRepeated, max, words);
 
         if (words.size() == 1) {
             checkAgain = solveLetters(size, numbers, words.iterator().next());
@@ -181,6 +188,51 @@ public class Codeword extends Game {
             checkAgain = lookForSimilarities(size, numbers, words);
         }
         return checkAgain;
+    }
+
+    private Collection<String> filterRepeatedLetters(Line line, Map<Integer, Integer> numberRepeated, int max, Collection<String> words) {
+        if (max > 1 && !words.isEmpty()) {
+            Set<Integer> checked = new HashSet<>();
+            Set<ArrayList<Integer>> repeated = new LinkedHashSet<>();
+            for (Entry<Integer, Integer> number : numberRepeated.entrySet()) {
+                int num = number.getKey();
+                if (number.getValue() > 1 && checked.add(num)) {
+                    int j = 0;
+                    ArrayList<Integer> rep = new ArrayList<>(number.getValue());
+                    for (Point p : line) {
+                        if (boardNumbers[p.getRow()][p.getCol()] == num) {
+                            rep.add(j);
+                        }
+                        j++;
+                    }
+                    repeated.add(rep);
+                }
+            }
+            if (!repeated.isEmpty()) {
+                words = words.stream()
+                    .filter(word -> {
+                        boolean match = true;
+                        for (Iterator<ArrayList<Integer>> ite = repeated.iterator(); ite.hasNext();) {
+                            ArrayList<Integer> rep = ite.next();
+                            int indexLetter = rep.get(0);
+                            char letter = word.charAt(indexLetter);
+                            for (Integer r : rep) {
+                                if (letter != word.charAt(r)) {
+                                    match = false;
+                                    break;
+                                }
+                            }
+
+                            if (!match) {
+                                break;
+                            }
+                        }
+                        return match;
+                    })
+                    .collect(Collectors.toList());
+            }
+        }
+        return words;
     }
 
     private boolean lookForSimilarities(int size, ArrayList<Integer> numbers, Collection<String> words) {
@@ -197,18 +249,18 @@ public class Codeword extends Game {
                     break;
                 }
             }
-            if(same) {
+            if (same) {
                 sb.append(c);
                 checkAgain = true;
             } else {
                 sb.append(' ');
             }
         }
-        
-        if(checkAgain) {
+
+        if (checkAgain) {
             checkAgain = solveLetters(size, numbers, sb.toString());
         }
-        
+
         return checkAgain;
     }
 
@@ -216,9 +268,8 @@ public class Codeword extends Game {
         boolean checkAgain = false;
         for (int k = 0; k < size; k++) {
             char c = word.charAt(k);
-            if (c != ' ') {
-                int num = numbers.get(k);
-
+            int num = numbers.get(k);
+            if (c != ' ' && letters[num] == ' ') {
                 letters[num] = c;
                 missingLetters.remove(c);
                 checkAgain = true;

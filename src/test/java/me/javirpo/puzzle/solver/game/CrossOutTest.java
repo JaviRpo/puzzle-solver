@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CodewordTest extends GameTest {
+public class CrossOutTest extends GameTest {
     @Test
     public void test() throws IOException {
         int rows = 5;
@@ -52,49 +52,6 @@ public class CodewordTest extends GameTest {
                 "hello",
                 "a l  ",
                 "thyme"
-        };
-        Assert.assertArrayEquals(expectedBoard, currentBoard);
-    }
-    @Test
-    public void test2() throws IOException {
-        int rows = 5;
-        
-        ArrayList<String> inputLines = new ArrayList<>();
-        // Board
-        inputLines.add("" + rows);
-        inputLines.add("5");
-        inputLines.add("6,7,3,5,8");
-        inputLines.add("5,0,7,0,2");
-        inputLines.add("8,5,7,1,5");
-        inputLines.add("3,0,9,0,4");
-        inputLines.add("10,3,7,4,3");
-        
-        // Missing Letters
-        inputLines.add("abkmnosv");
-        
-        // Some Letters
-        inputLines.add("-2");
-        inputLines.add("7,r");
-        inputLines.add("-2");
-        inputLines.add("3,e");
-        
-        // Solve
-        inputLines.add("-1");
-        
-        configureInputStream(inputLines);
-        
-        Codeword puzzle = new Codeword();
-        puzzle._run();
-        
-        String output = puzzle.stringBoard();
-        String[] currentBoard = StringUtils.split(output, '\n');
-        
-        String[] expectedBoard = {
-                "break",
-                "a r n",
-                "karma",
-                "e r v",
-                "serve"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);
     }

@@ -29,6 +29,12 @@ public class CrossOut extends Game {
 
         patternRows = new String[rows];
         patternCols = new String[cols];
+        
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                boardNumbers[i][j] = 1;
+            }
+        }
     }
 
     private Collection<String>[] read(String type, int size, String[] patternLines) throws IOException {

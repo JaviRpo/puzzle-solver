@@ -3,11 +3,13 @@ package me.javirpo.puzzle.solver.helper;
 import java.util.Iterator;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 public class Line implements Iterable<Point> {
     private boolean horizontal;

@@ -1,10 +1,12 @@
 package me.javirpo.puzzle.solver.game;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public abstract class Game {
     protected Scanner sc;
+    private boolean defaultBoardPicked;
 
     protected int rows;
     protected int cols;
@@ -39,6 +41,25 @@ public abstract class Game {
         }
     }
 
+    protected void showOptionsBoard() {
+        List<int[][]> boards = CrosswordBoards.boards(rows, cols);
+        if (!boards.isEmpty()) {
+            for (int i = 0; i < boards.size(); i++) {
+                System.out.println();
+                System.out.println("BOARD #" + i);
+                int[][] board = boards.get(i);
+                System.out.println(stringBoardBlock(board, new char[rows][cols]));
+            }
+            System.out.print("(-1 Exit) Board #: ");
+            String boardNumber = sc.nextLine();
+            if (!"-1".equals(boardNumber)) {
+                int number = Integer.parseInt(boardNumber);
+                boardNumbers = boards.get(number);
+                defaultBoardPicked = true;
+            }
+        }
+    }
+
     protected boolean isDone() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
@@ -51,6 +72,10 @@ public abstract class Game {
     }
 
     protected void readRows() {
+        if (defaultBoardPicked) {
+            return;
+        }
+
         System.out.println();
         System.out.println("Reading Rows ...");
 
@@ -75,13 +100,39 @@ public abstract class Game {
     }
 
     protected final String stringBoard() {
-        StringBuilder sb = new StringBuilder(rows * cols);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                sb.append(boardLetters[i][j]);
+        return stringBoardBlock();
+    }
+
+    protected final String stringBoardBlock() {
+        return stringBoard('\u25A0');
+    }
+
+    protected final String stringBoardSpace() {
+        return stringBoard(' ');
+    }
+
+    protected final String stringBoard(char emptyChar) {
+        return stringBoard(emptyChar, boardNumbers, boardLetters);
+    }
+
+    protected final String stringBoard(char emptyChar, int[][] numbers, char[][] letters) {
+        StringBuilder sb = new StringBuilder(numbers.length * numbers.length);
+        for (int i = 0; i < numbers.length; i++) {
+            for (int j = 0; j < numbers[i].length; j++) {
+                if (numbers[i][j] == 0) {
+                    sb.append(emptyChar);
+                    // } else if (boardLetters[i][j] == ' ') {
+                    // sb.append('\u25A1');
+                } else {
+                    sb.append(letters[i][j]);
+                }
             }
             sb.append('\n');
         }
         return sb.toString();
+    }
+
+    protected final String stringBoardBlock(int[][] numbers, char[][] letters) {
+        return stringBoard('\u25A0', numbers, letters);
     }
 }
