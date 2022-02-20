@@ -98,7 +98,6 @@ public class Wordy extends Game {
         while (checkAgain) {
             checkAgain = solveIterator();
         }
-        printLastWords();
     }
 
     private boolean solveIterator() throws IOException {
