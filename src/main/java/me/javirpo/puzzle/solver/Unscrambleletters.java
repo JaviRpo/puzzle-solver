@@ -275,7 +275,7 @@ public class Unscrambleletters {
 		HttpPost post = new HttpPost(URL);
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
 
-		try (CloseableHttpClient client = HttpClientBuilder.create().build();
+		try (CloseableHttpClient client = HttpClientBuilder.create().disableCookieManagement().build();
 				CloseableHttpResponse response = client.execute(post)) {
 			System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
 			System.out.println("Letters used : " + letters);

@@ -104,7 +104,7 @@ public abstract class Game {
     }
 
     protected final String stringBoardBlock() {
-        return stringBoard('\u25A0');
+        return stringBoard('■');
     }
 
     protected final String stringBoardSpace() {

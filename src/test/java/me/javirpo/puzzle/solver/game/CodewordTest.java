@@ -48,9 +48,9 @@ public class CodewordTest extends GameTest {
 
         String[] expectedBoard = {
                 "eagle",
-                "  u g",
+                "■■u■g",
                 "hello",
-                "a l  ",
+                "a■l■■",
                 "thyme"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);
@@ -91,9 +91,9 @@ public class CodewordTest extends GameTest {
         
         String[] expectedBoard = {
                 "break",
-                "a r n",
+                "a■r■n",
                 "karma",
-                "e r v",
+                "e■o■v",
                 "serve"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);

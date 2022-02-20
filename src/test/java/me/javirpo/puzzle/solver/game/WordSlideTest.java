@@ -53,12 +53,12 @@ public class WordSlideTest extends GameTest {
         String[] currentBoard = StringUtils.split(output, '\n');
 
         String[] expectedBoard = {
-                "aptly ",
-                "d i   ",
+                "aptly■",
+                "d■i■■■",
                 "decamp",
-                " d  o ",
-                " i  a ",
-                " turns"
+                "■d■■o■",
+                "■i■■a■",
+                "■turns"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);
     }
