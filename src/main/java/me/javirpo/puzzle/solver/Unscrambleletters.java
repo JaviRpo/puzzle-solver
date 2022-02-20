@@ -263,14 +263,14 @@ public class Unscrambleletters {
 		if (map != null && !map.isEmpty()) {
 			return map;
 		}
-		map = getWords(letters);
-		fullMap.put(letters, map);
+		map = getWords(sortLetters);
+		fullMap.put(sortLetters, map);
 
 		return map;
 	}
 
 	private static Map<Integer, Collection<String>> getWords(String letters) throws IOException {
-		List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+		List<NameValuePair> urlParameters = new ArrayList<>();
 		urlParameters.add(new BasicNameValuePair("hand", letters));
 		HttpPost post = new HttpPost(URL);
 		post.setEntity(new UrlEncodedFormEntity(urlParameters));
@@ -278,6 +278,7 @@ public class Unscrambleletters {
 		try (CloseableHttpClient client = HttpClientBuilder.create().build();
 				CloseableHttpResponse response = client.execute(post)) {
 			System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
+			System.out.println("Letters used : " + letters);
 
 			String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
@@ -287,7 +288,7 @@ public class Unscrambleletters {
 
 	private static Map<Integer, Collection<String>> processHtml(String responseString) {
 		Map<Integer, Collection<String>> map = new LinkedHashMap<>();
-		String groupTag = "<h3 class='word_listing_1'>";
+		String groupTag = "<h3 class=\"word_listing_1\">";
 		// System.out.println(responseString);
 		int indexGroup = 0;
 		while (indexGroup != -1) {
@@ -310,7 +311,7 @@ public class Unscrambleletters {
 
 	private static Collection<String> getWords(String responseString, int indexGroup, int until) {
 		Set<String> list = new TreeSet<>();
-		String wordTag = "<h3 class='word_listing_2'>";
+		String wordTag = "<h3 class=\"word_listing_2\">";
 
 		int indexWord = indexGroup;
 		while (indexWord != -1) {

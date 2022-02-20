@@ -94,7 +94,7 @@ public abstract class Game {
         }
     }
 
-    protected final void printBoard() {
+    protected void printBoard() {
         System.out.println();
         System.out.println(stringBoard());
     }
