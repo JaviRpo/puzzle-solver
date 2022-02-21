@@ -34,13 +34,13 @@ public class WordyTest extends GameTest {
         inputLines.add("peace");
         inputLines.add("pxxpx");
         runTest(puzzle, inputLines);
-        validate(puzzle, " r   ");
+        validate(puzzle, "cr   ");
 
         inputLines.add("-2");
         inputLines.add("weird");
         inputLines.add("xxcpx");
         runTest(puzzle, inputLines);
-        validate(puzzle, " ri  ");
+        validate(puzzle, "cri p");
 
         inputLines.add("-2");
         inputLines.add("music");
