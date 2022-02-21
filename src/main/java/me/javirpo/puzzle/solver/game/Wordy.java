@@ -1,17 +1,21 @@
 package me.javirpo.puzzle.solver.game;
 
 import me.javirpo.puzzle.solver.Unscrambleletters;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Wordy extends Game {
     private static final int LEN = 5;
-    private String letters = "abcdefghijklmnopqrstuvwxyz";
+    private static final String LETTERS = "abcdefghijklmnopqrstuvwxyz";
     private final Set<String> mustHave = new HashSet<>();
     private Collection<String> lastWords = Collections.emptyList();
+    private List<String> crossCols;
 
     @Override
     protected void run() throws IOException {
@@ -53,6 +57,9 @@ public class Wordy extends Game {
     protected void createBoard() {
         rows = 1;
         cols = 5;
+        crossCols = IntStream.range(0, LEN)
+                .mapToObj(i -> LETTERS)
+                .collect(Collectors.toList());
 
         boardLetters = new char[][]{{' ', ' ', ' ', ' ', ' '}};
         boardNumbers = new int[][]{{1, 1, 1, 1, 1}};
@@ -78,19 +85,33 @@ public class Wordy extends Game {
             char option = line.charAt(i);
             switch (option) {
                 case 'X':
-                    letters = letters.replace(letter, "");
+                    removeLetter(letter);
                     break;
                 case 'C':
                     mustHave.add(letter);
+                    removeLetter(letter);
+                    crossCols.set(i, letter);
                     putLetter(0, i, word.charAt(i));
                     break;
                 case 'P':
                     mustHave.add(letter);
+                    removeLetter(i, letter);
                     break;
                 default:
                     System.out.println("WARNING - Option not valid: " + option);
             }
         }
+    }
+
+    private void removeLetter(String letter) {
+        IntStream.range(0, crossCols.size())
+                .forEach(i -> removeLetter(i, letter));
+    }
+
+    private void removeLetter(int i, String letter) {
+        String letters = crossCols.get(i);
+        letters = letters.replace(letter, "");
+        crossCols.set(i, letters);
     }
 
     private void solve() throws IOException {
@@ -116,7 +137,7 @@ public class Wordy extends Game {
     private void checkLetter(int col, StringBuilder pattern) {
         if (boardLetters[0][col] == ' ') {
             pattern.append('[');
-            pattern.append(letters);
+            pattern.append(crossCols.get(col));
             pattern.append(']');
         } else {
             pattern.append(boardLetters[0][col]);
@@ -126,7 +147,7 @@ public class Wordy extends Game {
     private boolean search(StringBuilder pattern) throws IOException {
         boolean checkAgain = false;
 
-        Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(mustHave.size() == LEN ? StringUtils.join(mustHave, "") : letters);
+        Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(mustHave.size() == LEN ? StringUtils.join(mustHave, "") : searchLetters());
         Collection<String> words = Unscrambleletters.getAndFilter(map, LEN, pattern.toString());
         // Filter words with MUST_HAVE
         words = words.stream()
@@ -147,6 +168,16 @@ public class Wordy extends Game {
             checkAgain = lookForSimilarities(words);
         }
         return checkAgain;
+    }
+
+    private String searchLetters() {
+        Set<Character> character = crossCols.stream()
+                .map(String::toCharArray)
+                .map(ArrayUtils::toObject)
+                .map(Arrays::asList)
+                .flatMap(List::stream)
+                .collect(Collectors.toSet());
+        return StringUtils.join(character, "");
     }
 
     private boolean lookForSimilarities(Collection<String> words) {

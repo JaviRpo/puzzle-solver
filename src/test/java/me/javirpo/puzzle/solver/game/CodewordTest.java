@@ -47,11 +47,11 @@ public class CodewordTest extends GameTest {
         String[] currentBoard = StringUtils.split(output, '\n');
 
         String[] expectedBoard = {
-                "eagle",
-                "■■u■g",
-                "hello",
-                "a■l■■",
-                "thyme"
+                "│eagle│",
+                "│■■u■g│",
+                "│hello│",
+                "│a■l■■│",
+                "│thyme│"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);
     }
@@ -90,11 +90,11 @@ public class CodewordTest extends GameTest {
         String[] currentBoard = StringUtils.split(output, '\n');
         
         String[] expectedBoard = {
-                "break",
-                "a■r■n",
-                "karma",
-                "e■o■v",
-                "serve"
+                "│break│",
+                "│a■r■n│",
+                "│karma│",
+                "│e■o■v│",
+                "│serve│"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);
     }

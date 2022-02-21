@@ -1,5 +1,7 @@
 package me.javirpo.puzzle.solver.game;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
@@ -96,7 +98,9 @@ public abstract class Game {
 
     protected void printBoard() {
         System.out.println();
+        System.out.println("⎡" + StringUtils.repeat('‾', cols) + "⎤");
         System.out.println(stringBoard());
+        System.out.println("⎣" + StringUtils.repeat('⎽', cols) + "⎦");
     }
 
     protected final String stringBoard() {
@@ -116,23 +120,27 @@ public abstract class Game {
     }
 
     protected final String stringBoard(char emptyChar, int[][] numbers, char[][] letters) {
-        StringBuilder sb = new StringBuilder(numbers.length * numbers.length);
+        StringBuilder sb = new StringBuilder((5 + numbers.length) * numbers.length);
         for (int i = 0; i < numbers.length; i++) {
+            sb.append("│");
             for (int j = 0; j < numbers[i].length; j++) {
                 if (numbers[i][j] == 0) {
                     sb.append(emptyChar);
-                    // } else if (boardLetters[i][j] == ' ') {
-                    // sb.append('\u25A1');
+                //} else if (letters[i][j] == ' ') {
+                //    sb.append('⏥');
                 } else {
                     sb.append(letters[i][j]);
                 }
             }
-            sb.append('\n');
+            sb.append("│");
+            if (i + 1 < numbers.length) {
+                sb.append('\n');
+            }
         }
         return sb.toString();
     }
 
     protected final String stringBoardBlock(int[][] numbers, char[][] letters) {
-        return stringBoard('\u25A0', numbers, letters);
+        return stringBoard('■', numbers, letters);
     }
 }

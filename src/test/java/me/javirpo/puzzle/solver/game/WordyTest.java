@@ -72,7 +72,7 @@ public class WordyTest extends GameTest {
         String[] currentBoard = StringUtils.split(output, '\n');
 
         String[] expectedBoard = {
-            expectedWord
+            "│" + expectedWord + "│"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);
     }

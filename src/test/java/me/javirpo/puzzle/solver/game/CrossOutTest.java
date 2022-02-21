@@ -47,11 +47,11 @@ public class CrossOutTest extends GameTest {
         String[] currentBoard = StringUtils.split(output, '\n');
 
         String[] expectedBoard = {
-                "eagle",
-                "■■u■g",
-                "hello",
-                "a■l■■",
-                "thyme"
+                "│eagle│",
+                "│■■u■g│",
+                "│hello│",
+                "│a■l■■│",
+                "│thyme│"
         };
         Assert.assertArrayEquals(expectedBoard, currentBoard);
     }
