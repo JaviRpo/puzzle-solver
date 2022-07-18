@@ -98,9 +98,11 @@ public abstract class Game {
 
     protected void printBoard() {
         System.out.println();
-        System.out.println("⎡" + StringUtils.repeat('‾', cols) + "⎤");
+        //System.out.println(⎡' + StringUtils.repeat('‾', cols) + '⎤');
+        System.out.println(' ' + StringUtils.repeat('⎽', cols) + ' ');
         System.out.println(stringBoard());
-        System.out.println("⎣" + StringUtils.repeat('⎽', cols) + "⎦");
+        //System.out.println('⎣' + StringUtils.repeat('⎽', cols) + '⎦');
+        System.out.println(' ' + StringUtils.repeat('‾', cols) + ' ');
     }
 
     protected final String stringBoard() {

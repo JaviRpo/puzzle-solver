@@ -95,7 +95,7 @@ public class Unscrambleletters {
 	}
 
 	private static void print(Map<Integer, Collection<String>> map) {
-		map.entrySet().stream().forEach(entry -> {
+		map.entrySet().forEach(entry -> {
 			System.out.println("Words with " + entry.getKey() + " - " + entry.getValue());
 		});
 	}
@@ -104,7 +104,7 @@ public class Unscrambleletters {
 		System.out.println("Words with " + value + " - " + map.getOrDefault(value, Collections.emptyList()));
 	}
 
-	public static Collection<String> getAndFilter(Map<Integer, Collection<String>> map, int value, String regex) {
+	public static List<String> getAndFilter(Map<Integer, Collection<String>> map, int value, String regex) {
 		regex = checkSubPatterns(regex);
 		Pattern pattern = Pattern.compile(regex);
 		return map.getOrDefault(value, Collections.emptyList()).stream().filter(word -> pattern.matcher(word).matches())

@@ -11,11 +11,11 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Wordy extends Game {
-    private static final int LEN = 5;
     private static final String LETTERS = "abcdefghijklmnopqrstuvwxyz";
     private final Set<String> mustHave = new HashSet<>();
-    private Collection<String> lastWords = Collections.emptyList();
+    private List<String> lastWords = Collections.emptyList();
     private List<String> crossCols;
+    private Map<Integer, Set<String>> dictionary = new HashMap<>();
 
     @Override
     protected void run() throws IOException {
@@ -28,6 +28,9 @@ public class Wordy extends Game {
             System.out.println();
             System.out.println("-1. Solve");
             System.out.println("-2. Put Word");
+            if (!lastWords.isEmpty()) {
+                System.out.println("#. For any Last Word");
+            }
             System.out.print("Write: ");
             opt = sc.nextLine();
             switch (opt) {
@@ -39,6 +42,15 @@ public class Wordy extends Game {
                     printBoard();
                     solve();
                     break;
+                default:
+                    int nOpt = Integer.parseInt(opt);
+                    if (nOpt < lastWords.size()) {
+                        String word = lastWords.get(nOpt);
+                        readWord(word);
+                        printBoard();
+                        solve();
+                        break;
+                    }
             }
         }
         System.out.println("Finish ...");
@@ -56,17 +68,30 @@ public class Wordy extends Game {
     @Override
     protected void createBoard() {
         rows = 1;
-        cols = 5;
-        crossCols = IntStream.range(0, LEN)
+        System.out.print("Cols: ");
+        String strCols = sc.nextLine();
+        cols = Integer.parseInt(strCols);
+
+        crossCols = IntStream.range(0, cols)
                 .mapToObj(i -> LETTERS)
                 .collect(Collectors.toList());
 
-        boardLetters = new char[][]{{' ', ' ', ' ', ' ', ' '}};
-        boardNumbers = new int[][]{{1, 1, 1, 1, 1}};
+        boardLetters = new char[rows][cols];
+        boardNumbers = new int[rows][cols];
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                boardLetters[i][j] = ' ';
+                boardNumbers[i][j] = 1;
+            }
+        }
     }
 
     private void loadDictionary() {
-        // TODO: load letter with size
+        dictionary.put(4, new TreeSet<>(Arrays.asList("home", "star", "time")));
+        dictionary.put(5, new TreeSet<>(Arrays.asList("music", "heart")));
+        dictionary.put(6, new TreeSet<>(Arrays.asList("solver", "string", "method")));
+
+        System.out.println("Starting help: " + dictionary.getOrDefault(cols, Collections.emptySet()));
     }
 
     private void readHelp() {
@@ -74,6 +99,10 @@ public class Wordy extends Game {
         System.out.print("Word used: ");
         String word = sc.nextLine().toLowerCase();
 
+        readWord(word);
+    }
+
+    private void readWord(String word) {
         System.out.println("'X' for Not in word");
         System.out.println("'C' for Correct");
         System.out.println("'P' for Possible");
@@ -105,6 +134,7 @@ public class Wordy extends Game {
 
     private void removeLetter(String letter) {
         IntStream.range(0, crossCols.size())
+                .filter(i -> crossCols.get(i).length() != 1)
                 .forEach(i -> removeLetter(i, letter));
     }
 
@@ -147,8 +177,8 @@ public class Wordy extends Game {
     private boolean search(StringBuilder pattern) throws IOException {
         boolean checkAgain = false;
 
-        Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(mustHave.size() == LEN ? StringUtils.join(mustHave, "") : searchLetters());
-        Collection<String> words = Unscrambleletters.getAndFilter(map, LEN, pattern.toString());
+        Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(mustHave.size() == cols ? StringUtils.join(mustHave, "") : searchLetters());
+        List<String> words = Unscrambleletters.getAndFilter(map, cols, pattern.toString());
         // Filter words with MUST_HAVE
         words = words.stream()
                 .filter(w -> {
@@ -182,7 +212,7 @@ public class Wordy extends Game {
 
     private boolean lookForSimilarities(Collection<String> words) {
         boolean checkAgain = false;
-        StringBuilder sb = new StringBuilder(LEN);
+        StringBuilder sb = new StringBuilder(cols);
 
         String firstWord = words.iterator().next();
         for (int i = 0; i < firstWord.length(); i++) {

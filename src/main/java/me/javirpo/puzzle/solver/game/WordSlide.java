@@ -44,7 +44,6 @@ public class WordSlide extends Game {
 				break;
 			case "-2":
 				readHelp();
-				printBoard();
 				break;
 			}
 		}

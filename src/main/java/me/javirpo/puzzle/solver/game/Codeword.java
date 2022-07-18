@@ -169,14 +169,11 @@ public class Codeword extends Game {
         StringBuilder letterSearch, ArrayList<Integer> numbers) throws IOException {
         boolean checkAgain = false;
 
-        int max = numberRepeated.entrySet()
+        int max = numberRepeated.values()
             .stream()
-            .map(Entry::getValue)
             .max(Integer::compare)
             .orElse(1);
-        for (int k = 0; k < max; k++) {
-            letterSearch.append(currentMissingLetters);
-        }
+        letterSearch.append(currentMissingLetters.repeat(max));
 
         Map<Integer, Collection<String>> map = Unscrambleletters.getWordsWithCache(letterSearch.toString());
         Collection<String> words = Unscrambleletters.getAndFilter(map, size, pattern.toString());
@@ -212,8 +209,7 @@ public class Codeword extends Game {
                 words = words.stream()
                     .filter(word -> {
                         boolean match = true;
-                        for (Iterator<ArrayList<Integer>> ite = repeated.iterator(); ite.hasNext();) {
-                            ArrayList<Integer> rep = ite.next();
+                        for (ArrayList<Integer> rep : repeated) {
                             int indexLetter = rep.get(0);
                             char letter = word.charAt(indexLetter);
                             for (Integer r : rep) {
