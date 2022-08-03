@@ -14,6 +14,7 @@ public class WordyTest extends GameTest {
         Wordy puzzle = new Wordy();
 
         ArrayList<String> inputLines = new ArrayList<>();
+        inputLines.add("5");
 
         runTest(puzzle, inputLines);
         validate(puzzle, "     ");
