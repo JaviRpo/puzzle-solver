@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,8 +22,8 @@ public class WordSlide extends Game {
 	@Setter
 	private int minLength = 3;
 
-	private ArrayList<String> crossRows;
-	private ArrayList<String> crossCols;
+	private List<String> crossRows;
+	private List<String> crossCols;
 
 	@Override
 	protected void run() throws IOException {
@@ -62,8 +63,8 @@ public class WordSlide extends Game {
 		crossCols = readMissingLetters("Col", cols);
 	}
 
-	private ArrayList<String> readMissingLetters(String type, int size) {
-		ArrayList<String> cross = new ArrayList<>(size);
+	private List<String> readMissingLetters(String type, int size) {
+		List<String> cross = new ArrayList<>(size);
 
 		for (int i = 0; i < size; i++) {
 			System.out.print("Letters per " + type + " #" + (i + 1) + ": ");

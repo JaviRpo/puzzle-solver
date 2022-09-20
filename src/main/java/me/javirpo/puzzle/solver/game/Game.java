@@ -97,6 +97,8 @@ public abstract class Game {
     }
 
     protected void printBoard() {
+        Integer my[] = {1, 2, 3};
+
         System.out.println();
         //System.out.println(⎡' + StringUtils.repeat('‾', cols) + '⎤');
         System.out.println(' ' + StringUtils.repeat('⎽', cols) + ' ');
