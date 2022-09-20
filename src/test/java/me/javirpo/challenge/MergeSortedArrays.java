@@ -2,6 +2,11 @@ package me.javirpo.challenge;
 
 import java.util.Arrays;
 
+/**
+ * You are given two sorted arrays of numbers, where the first array is twice as long as the second array.
+ * Also, the second half of the first array is empty.
+ * Write a function, which merges these two arrays and preserves the sorted order of the elements.
+ */
 public class MergeSortedArrays {
     public static void main(String[] args) {
         int[] arr1 = {2, 3, 6, 7, 0, 0, 0, 0};
