@@ -41,7 +41,7 @@ public class SaveImagesInPdf extends PDFStreamEngine {
      */
     public static void main(String[] args) throws IOException {
         PDDocument document = null;
-        String fileName = "C:\\Users\\javier.restrepo\\Downloads\\AKA\\Tiny\\home\\Dibujo sin título.pdf";
+        String fileName = "/Users/javier.restrepo/Downloads/E2E-test-report/contrato.pdf";
         try {
             document = PDDocument.load(new File(fileName));
             SaveImagesInPdf printer = new SaveImagesInPdf();
@@ -88,7 +88,7 @@ public class SaveImagesInPdf extends PDFStreamEngine {
                     bImage = image.getImage();
                     ImageIO.write(bImage, "PNG",
                         new File(
-                            "C:\\P\\AP\\Attractours\\files\\convenios\\page_"
+                            "/Users/javier.restrepo/Downloads/E2E-test-report/page_"
                                 + pageNumber + "_image_" + imageNumber + ".png"));
                     System.out.println("Image saved.");
                     imageNumber++;
