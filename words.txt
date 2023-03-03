@@ -1,2 +1,74 @@
 {
+  "abrazadera": [
+    "herramienta de fijación"
+  ],
+  "agrupado": [
+    "tirados juntos sin cuidado",
+    "tirados juntos"
+  ],
+  "ahorrar": [
+    "reducción de costos"
+  ],
+  "evolucionar": [
+    "adaptarse",
+    "cambiar"
+  ],
+  "guante": [
+    "manopla con los dedos"
+  ],
+  "hediondo": [
+    "desagradablemente picante",
+    "desagradable olor"
+  ],
+  "horno": [
+    "microondas"
+  ],
+  "jalar": [
+    "tirar"
+  ],
+  "java": [
+    "isla indonesia",
+    "lenguaje de programación"
+  ],
+  "leona": [
+    "gato grande hembra",
+    "esposa del rey de la selva"
+  ],
+  "león": [
+    "gato grande macho",
+    "rey de la selva"
+  ],
+  "maloliente": [
+    "desagradablemente picante",
+    "desagradable olor"
+  ],
+  "open": [
+    "torneo de golf, tal vez"
+  ],
+  "perseguir": [
+    "estar en persecución"
+  ],
+  "pio": [
+    "sonido de pájaros jóvenes"
+  ],
+  "pio pio": [
+    "sonido de pájaros jóvenes"
+  ],
+  "sarampión": [
+    "enfermedad infantil"
+  ],
+  "sutil": [
+    "delicado",
+    "no descarado"
+  ],
+  "también": [
+    "ademas",
+    "en adición"
+  ],
+  "timón": [
+    "asiento de conducción"
+  ],
+  "tirar": [
+    "jalar"
+  ]
 }
