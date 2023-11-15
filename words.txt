@@ -71,4 +71,8 @@
   "tirar": [
     "jalar"
   ]
+  ,
+    "test": [
+      "prueba   "
+    ]
 }
